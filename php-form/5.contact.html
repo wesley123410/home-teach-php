@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Contact</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+	<form id="contact_form" action="5.contact.api.php">
+		<label>Name: </label>
+		<input type="text" name="user_name" value="bing">
+
+		<br/><br/>
+
+		<label>Email: </label>
+		<input type="email" name="user_email" value="bing@gmail.com">
+
+		<br/><br/>
+
+		<label>Subject: </label>
+		<input type="text" name="user_subject" value="question">
+
+		<br/><br/>
+
+		<label>Content: </label>
+		<textarea name="user_content">This's Content.</textarea>
+
+		<br/><br/>
+
+		<input type="submit" name="submit_btn">
+		<div id="message"></div>
+	</form>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+		$(document)
+		.on('submit', '#contact_form', function(e){
+			console.log('click it!');
+
+			var form = $(this);
+		    var url = form.attr('action');
+
+		    $.ajax({
+				type: "POST",
+				url: url,
+				data: form.serialize(),
+				success: function(data)
+				{
+				   $("#message").html("<p>感謝您的來信。</p>")
+				},
+				error:function(exception)
+				{
+		            console.log(exception.responseText);
+		            var response = JSON.parse(exception.responseText);
+		            $("#message").html(response.message);
+		        }
+	         });
+
+			e.preventDefault();
+		})
+		.ready(function(){
+			
+		});
+	</script>
+</body>
+</html>
