@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>登入</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+	<h1>歡迎，<span id="userName"></span></h1>
+	<button id="logout">登出</button>	
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+		$(document)
+		.on("click", "#logout", function(e){
+			document.location.href="logout.api.php";
+		})
+		.ready(function(){
+			$.ajax({
+				type: "POST",
+				url: 'isLogin.api.php',
+				success: function(data)
+				{
+					var response = JSON.parse(data);
+					$('#userName').html(response['UserName']);
+				},
+				error:function(exception)
+				{
+					var response = JSON.parse(exception.responseText);
+					console.log(response);
+					document.location.href="login.html";
+				}
+			});
+		});
+
+		
+	</script>
+</body>
+</html>

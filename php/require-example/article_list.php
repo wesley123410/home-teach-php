@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Article</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
+</head>
+<body>
+	<a href="new_article.html"><button class="create_btn">新增</button></a>
+	<div id="message"></div>
+	<table id="article_list" border="1">
+		<thead>
+			<th>編號</th>
+			<th>日期</th>
+			<th>標題</th>
+			<th>分類</th>
+			<th>功能</th>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+
+		$(document)
+		.on("click", ".display_btn", function(e){
+			var tag_id = $(this).attr('id');
+			console.log(tag_id);
+
+			var id = tag_id.replace('display_btn_', '');
+			console.log(id);
+
+			window.location.href = "article.php?id=" + id;
+		})
+		.on("click", ".delete_btn", function(e){
+			var tag_id = $(this).attr('id');
+			var id = tag_id.replace('delete_btn_', '');
+
+			deleteArticle(id);
+		})
+		.on("click", ".edit_btn", function(e){
+			var tag_id = $(this).attr('id');
+			console.log(tag_id);
+
+			var id = tag_id.replace('edit_btn_', '');
+			console.log(id);
+
+			window.location.href = "edit_article.php?id=" + id;
+		})
+		.ready(function(){
+			loadArticle();
+		});
+
+		function loadArticle()
+		{
+			$.ajax({
+				type: "POST",
+				url: "api/article/article_list.api.php",
+				success: function(data)
+				{
+					var response = JSON.parse(data);
+
+					$("#article_list tbody").empty();
+					response.forEach(
+						function(res) 
+						{
+							var tbody = "<tr>";
+							tbody += "<td>" + res['id'] + "</td>";
+							tbody += "<td>" + res['publish_date'] + "</td>";
+							tbody += "<td>" + res['title'] + "</td>";
+							tbody += "<td>" + res['category_id'] + "</td>";
+							tbody += "<td>";
+							tbody += '<button class="display_btn" id="display_btn_' + res['id'] + '">查看</button>';
+							tbody += '<button class="edit_btn" id="edit_btn_' + res['id'] + '">編輯</button>';
+							tbody += '<button class="delete_btn" id="delete_btn_' + res['id'] + '">刪除</button>';
+							tbody += "</tr>";
+
+							$("#article_list tbody").append(tbody);
+						}
+					);
+					
+
+				},
+				error:function(exception)
+				{
+		            console.log(exception.responseText);
+		            var response = JSON.parse(exception.responseText);
+		            $("#message").html(response.message);
+		        }
+	         });
+		}
+
+		function deleteArticle(id)
+		{
+			$.ajax({
+				type: "POST",
+				url: "api/article/delete_article.api.php",
+				data: {id: id},
+				success: function(data)
+				{
+					$("#message").html("文章刪除成功");
+					loadArticle();
+				},
+				error:function(exception)
+				{
+		            console.log(exception.responseText);
+		            var response = JSON.parse(exception.responseText);
+		            $("#message").html(response.message);
+		        }
+	         });
+		}
+	</script>
+</body>
+</html>
